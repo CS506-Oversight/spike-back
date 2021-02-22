@@ -31,29 +31,18 @@ def create_checkout_session():
             abort(400)
 
         data = request.get_json()
+        # print(json.dumps(data, indent=2))
 
         checkout_session = Stripe.checkout.Session.create(
             payment_method_types=['card'],
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'usd',
-                        'unit_amount': data['unit_amt']*100,
-                        'product_data': {
-                            'name': 'Donation to {0}'.format(data['charity_org']),
-                            'images': data['images'],
-                        },
-                    },
-                    'quantity': data['quantity'],
-                },
-            ],
+            line_items=data['items'],
             mode='payment',
-            success_url=os.getenv(
-                'CLIENT_DOMAIN') + '/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=os.getenv('CLIENT_DOMAIN') + '/buy',
+            success_url="http://localhost:8787/success",
+            cancel_url="http://localhost:8787/cancel",
         )
         return jsonify({'id': checkout_session.id})
     except Exception as e:
+        print(e)
         return jsonify(error=str(e)), 403
 
 
@@ -66,7 +55,7 @@ def webhook():
         abort(400)
 
     payload = request.get_data()
-    sig_header = request.headers.get('Stripe-Signature')
+    sig_header = request.environ.get('HTTP_STRIPE_SIGNATURE')
     event = None
 
     try:
@@ -84,6 +73,8 @@ def webhook():
 
     if event_dict['type'] == "checkout.session.completed":
         session = event['data']['object']
+
+        print('SUCCESS!')
 
         # if store_donation(session) == 0:
         #     print('DB Success')
@@ -128,3 +119,13 @@ def webhook():
 #         print(e)
 #
 #         return 1
+
+
+@app.route("/success", methods=['GET'])
+def success():
+    return 'Purchase successful. Thank you!'
+
+
+@app.route("/cancel", methods=['GET'])
+def cancel():
+    return 'Purchase cancelled.'
