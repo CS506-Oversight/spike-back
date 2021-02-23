@@ -13,10 +13,10 @@ def get_menu():
     """Endpoint that retrieves the menu for the client.
 
     Gets all the menu items from a restaurant and complies
-    it together to form the menu. Essentially is get_all_items
+    it together to form the menu.
     """
-    menu_list = MenuController.get_all_menu_items()
-    return menu_list
+    menu = MenuController.get_all_menu_items()
+    return jsonify(menu), 200
 
 
 @app.route('/menu_item/<string:item_id>', methods=['GET'])
@@ -40,16 +40,23 @@ def create_menu_item():
     new_item_id = MenuController.create_menu_item(menu_item)
 
     if new_item_id:
-        return jsonify({"status": "Success", "message": f'Item added with id: {new_item_id}'}), 200
+        return jsonify({"status": "Success", "message": f'Item added with id: {new_item_id}'}), 201
 
     return jsonify({"status": "Failed", "message": "Problem creating a new menu item."}), 500
 
 
-@app.route('/update_menu_item/<int:item_id>', methods=['PATCH'])
+@app.route('/update_menu_item/<string:item_id>', methods=['POST'])
 def update_menu_item(item_id):
-    pass
+    properties = json.loads(request.data)
+    item_id = MenuController.update_menu_item(item_id, properties)
+    return 400
 
 
-@app.route('/delete_menu_item/<int:item_id>', methods=['DELETE'])
+@app.route('/delete_menu_item/<string:item_id>', methods=['DELETE'])
 def delete_menu_item(item_id):
-    pass
+    item_id = MenuController.delete_menu_item(item_id)
+
+    if item_id:
+        return jsonify({"status": "Success", "message": f'Item with id {item_id} has been deleted.'}), 200
+
+    return jsonify({"status": "Failed", "message": f'There was a problem deleting the item with id {item_id}.'}), 500
