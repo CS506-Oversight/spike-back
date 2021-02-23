@@ -13,4 +13,4 @@ def make_inStock(product_id):
 @app.route('/outStock/<product_id>', methods=['POST'])
 def make_outStock(product_id):
     StaffController.make_outStock(product_id)
-    return "done"
+    return "done1"
