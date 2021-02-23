@@ -7,10 +7,10 @@ StaffController = StaffController()
 
 @app.route('/inStock/<product_id>', methods=['POST'])
 def make_inStock(product_id):
-    StaffController.make_inStock(product_id)
-    return "done"
+    updated_product = StaffController.make_inStock(product_id)
+    return updated_product
 
 @app.route('/outStock/<product_id>', methods=['POST'])
 def make_outStock(product_id):
-    StaffController.make_outStock(product_id)
-    return "done"
+    updated_product = StaffController.make_outStock(product_id)
+    return updated_product

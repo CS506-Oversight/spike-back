@@ -10,11 +10,11 @@ class OrderController:
         pass
 
     def create_order(self, order):
-        #Test for Inventory with sunrise mimosa
-        #self.removeFromInventory("prod_IzhmfPUg6tM3zH", -app47)
         pass
 
-
+    def test_order(self):
+        # Test for Inventory with sunrise mimosa
+        self.removeFromInventory("prod_IzhmfPUg6tM3zH", 1)
 
 #removes amoujnt of item of given product ID from the inventory
 #negative amounts will add to inventory
@@ -31,6 +31,10 @@ class OrderController:
                 },
                 active=True,
             )
+            updated_product = Stripe.Product.modify(
+                prod_id,
+                active=True,
+            )
         else:
             updated = Stripe.SKU.modify(
                 SKU["data"][0]["id"],
@@ -38,6 +42,10 @@ class OrderController:
                 "quantity": inventory,
                 "type": "finite",
                 },
+                active=False,
+            )
+            updated_product = Stripe.Product.modify(
+                prod_id,
                 active=False,
             )
         print(SKU)

@@ -7,7 +7,7 @@ from app.models.order_model import Order
 from app.controllers.order_controller import OrderController
 import json
 
-
+OrderController = OrderController()
 @app.route('/order/<int:order_id>', methods=['GET'])
 def get_order(order_id):
     pass
@@ -19,8 +19,13 @@ def get_orders():
 
 
 @app.route('/create_order', methods=['POST'])
-def create_order():
+def create_order(order):
     pass
+
+@app.route('/test_order', methods=['POST'])
+def test_order():
+    OrderController.test_order()
+    return("tested")
 
 
 @app.route('/create-checkout-session', methods=['POST'])
