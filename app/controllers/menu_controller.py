@@ -7,17 +7,26 @@ import json
 class MenuController:
     def get_all_menu_items(self):  # TODO : add current inventory amount
         menu_list = (Stripe.Product.list(limit=30))
-        print(menu_list)
-        final_menu = {}
+
+        final_menu = {"menu": []}
+
         for item in menu_list:
-            price = self.get_product_price(item["id"])
-            new_item = MenuItem(item["name"], item["description"], price, item["id"])
-            final_menu[item["name"]] = json.dumps(new_item.__dict__)
+            # only grab those items that are not archived (deleted)
+            if item["active"]:
+                price = self.get_product_price(item["id"])
+                new_item = {
+                    "name": item["name"],
+                    "description": item["description"],
+                    "price": price,
+                    "item_id": item["id"],
+                    "type": item["metadata"]["Type"],
+                }
+                final_menu["menu"].append(new_item)
         return final_menu
 
     def get_all_prices(self):  # Unused for now but could be used later
         data_list = Stripe.Price.list()
-        #print(data_list)
+        # print(data_list)
         price_list = {}
         for item in data_list:
             price_list[item["product"]] = item["unit_amount"]
@@ -31,7 +40,7 @@ class MenuController:
     def get_menu_item_by_id(self, item_id):
         try:
             product = Stripe.Product.retrieve(item_id)
-            # print(product)
+
             if product:
                 menu_item = {
                     "name": product["name"],
@@ -78,7 +87,12 @@ class MenuController:
         return new_product["id"]
 
     def delete_menu_item(self, item_id):
-        pass
+        try:
+            Stripe.Product.modify(item_id, active="false")
+        except Exception as e:
+            return None
 
-    def update_menu_item(self, item_id):
+        return item_id
+
+    def update_menu_item(self, item_id, properties):
         pass
