@@ -35,7 +35,7 @@ def create_menu_item():
     data = json.loads(request.data)
 
     menu_item = MenuItem(item_name=data["name"], item_desc=data["description"], item_price=data["price"],
-                         item_type=data["type"], quantity=data["quantity"], img=data["img"])
+                         item_type=data["type"], img=data["img"], in_stock=data["in_stock"])
 
     new_item_id = MenuController.create_menu_item(menu_item)
 
