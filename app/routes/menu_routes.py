@@ -40,7 +40,7 @@ def create_menu_item():
     new_item_id = MenuController.create_menu_item(menu_item)
 
     if new_item_id:
-        return jsonify({"status": "Success", "message": f'Item added with id: {new_item_id}'}), 201
+        return jsonify({"status": "Success", "message": f'Item added with id: {new_item_id}.'}), 201
 
     return jsonify({"status": "Failed", "message": "Problem creating a new menu item."}), 500
 

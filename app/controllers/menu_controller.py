@@ -22,6 +22,7 @@ class MenuController:
                     "type": item["metadata"]["Type"],
                 }
                 final_menu["menu"].append(new_item)
+
         return final_menu
 
     def get_all_prices(self):  # Unused for now but could be used later
