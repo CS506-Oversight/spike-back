@@ -8,18 +8,23 @@ class MenuController:
     def get_all_menu_items(self):  # TODO : add current inventory amount
         menu_list = (Stripe.Product.list(limit=30))
 
-        final_menu = {"menu": []}
+        final_menu = {"menu": [], "menu_item_types": []}
 
         for item in menu_list:
             # only grab those items that are not archived (deleted)
             if item["active"]:
+                item_type = item["metadata"]["Type"]
+
+                if item_type not in final_menu["menu_item_types"]:
+                    final_menu["menu_item_types"].append(item_type)
+
                 price = self.get_product_price(item["id"])
                 new_item = {
                     "name": item["name"],
                     "description": item["description"],
                     "price": price,
                     "item_id": item["id"],
-                    "type": item["metadata"]["Type"],
+                    "type": item_type,
                 }
                 final_menu["menu"].append(new_item)
 
