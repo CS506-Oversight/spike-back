@@ -5,9 +5,9 @@ import json
 
 class StaffController:
 
-    def make_inStock(self, prodID):
+    def make_inStock(self, prod_id):
         pass
 
 
-    def make_outStock(self, prodID):
+    def make_outStock(self, prod_id):
         pass
