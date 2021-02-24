@@ -1,0 +1,42 @@
+[BASIC]
+
+# Reason of the good names:
+# - _
+#   often used as dummy variable during unpacking
+# - T
+#   often used to for TypeVar
+# - f
+#   often used as a file stream name
+# - i, j, k
+#   often used in for loops
+# - s
+#   often used to represent "string"
+# - v
+#   often used to represent "value"
+# - dt, tz
+#   often used in datetime handling (dt for datetime, tz for timezone)
+# - ex
+#   often used as the var name of exception caught by try..except
+# - fn
+#   often used to represent a function address
+# - SKU
+#   used by Stripe
+
+good-names=_,T,f,i,j,k,s,v,dt,ex,fn,tz,SKU
+
+[FORMAT]
+
+max-line-length=119
+
+[MESSAGES CONTROL]
+
+# REMOVE: `unsubscriptable-object` generates false positives for python 3.9 and pylint==2.6.
+#   https://github.com/PyCQA/pylint/pull/3890 - Expected to be fixed in the next version
+#   Re-enable it when the issue is fixed.
+disable=unsubscriptable-object,
+        # Search for todo tags and manually manage them instead
+        fixme,
+        # Just let it emit during runtime
+        cyclic-import,
+        # Let it checked by IDE or flake8
+        arguments-differ

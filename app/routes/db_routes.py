@@ -1,28 +1,32 @@
-from app import app
-from app.config.firebase.fb_config import db
-import flask
-import json
+"""Routes for fetching the data from the database."""
+from flask import Blueprint
 
-menu_ref = db.collection(u'Menu')
+from app.config import fb_db
+
+__all__ = ('blueprint_db',)
+
+blueprint_db = Blueprint('auth', __name__)
+
+menu_ref = fb_db.collection('Menu')
 
 
-@app.route('/allMenu', methods=['GET'])
+@blueprint_db.route('/allMenu', methods=['GET'])
 def get_all():
+    """Endpoint to get all menu items."""
     menu = menu_ref.get()
     print(menu)
     return menu[0].to_dict()
 
-
-# @app.route("/users", methods=['GET'])
+# @blueprint_db.route('/users', methods=['GET'])
 # def get_users():
 #     return 'users'
 #
 #
-# @app.route("/users/amount", methods=['GET'])
+# @blueprint_db.route('/users/amount', methods=['GET'])
 # def get_num_users():
 #     return 'amount of users'
 #
 #
-# @app.route("/user/create", methods=['POST'])
+# @blueprint_db.route('/user/create', methods=['POST'])
 # def create_user():
 #     return 'create a user'

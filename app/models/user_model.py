@@ -1,3 +1,5 @@
+"""Data model for an user."""
+
 class User:
     def __init__(self, username, password, phone, address, email, type="staff"):
         self.username = username

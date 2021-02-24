@@ -1,9 +1,18 @@
+"""Data model for an order."""
+from dataclasses import dataclass
+from datetime import datetime
+
+__all__ = ('Order',)
+
+
+@dataclass
 class Order:
-    def __init__(self, order_id, order_subtotal, order_tax, customer_name, customer_email, items_ordered, order_date):
-        self.order_id = order_id
-        self.order_subtotal = order_subtotal
-        self.order_tax = order_tax
-        self.customer_name = customer_name
-        self.customer_email = customer_email
-        self.items_ordered = items_ordered  # should be a list of menu item ids
-        self.order_date = order_date
+    """Data model for an order."""
+
+    order_id: str
+    order_subtotal: float
+    order_tax: float
+    customer_name: str
+    customer_email: str
+    items_ordered: list[str]  # a list of menu item IDs
+    order_date: datetime  # TODO: Check if this needs some transformation to store it in the db or not

@@ -1,92 +1,110 @@
-from app import app
-from flask import request, jsonify, abort
-from app.config.stripe.stripe_config import Stripe
+"""Routes for performing actions related to order."""
 import os
-import datetime
-from app.models.order_model import Order
-from app.controllers.order_controller import OrderController
-import json
 
-OrderController = OrderController()
-@app.route('/order/<int:order_id>', methods=['GET'])
+from flask import Blueprint, abort, jsonify, request
+from stripe.error import SignatureVerificationError
+
+from app.config import Stripe
+from app.controllers import OrderController
+
+__all__ = ('blueprint_order',)
+
+blueprint_order = Blueprint('order', __name__)
+
+
+@blueprint_order.route('/order/<int:order_id>', methods=['GET'])
 def get_order(order_id):
-    pass
+    """Get the order at ``order_id``."""
+    # TODO: Define and document order not exists behavior
+    print(order_id)  # Dummy call for checking the argument
 
 
-@app.route('/orders', methods=['GET'])
+@blueprint_order.route('/orders', methods=['GET'])
 def get_orders():
-    pass
+    """Get all available orders."""
 
 
-@app.route('/create_order', methods=['POST'])
+@blueprint_order.route('/create_order', methods=['POST'])
 def create_order(order):
-    pass
+    """Create an ``order``."""
+    # TODO: Define and document the order-failed-to-create behavior
+    print(order)  # Dummy call for checking the argument
 
-@app.route('/test_order', methods=['POST'])
+
+@blueprint_order.route('/test_order', methods=['POST'])
 def test_order():
+    """Dummy endpoint for testing."""
+    # FIXME: Should delete after testing
     OrderController.test_order()
-    return("tested")
+    return 'tested'
 
 
-@app.route('/create-checkout-session', methods=['POST'])
+@blueprint_order.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
-    try:
-        if request.content_length > 1024**2:
-            print('Request too large')
-            abort(400)
+    """Endpoint to create a checkout session."""
+    if request.content_length > 1024 ** 2:
+        print('Request too large')
+        abort(400)
 
-        data = request.get_json()
-        # print(json.dumps(data, indent=2))
+    data = request.get_json()
+    # print(json.dumps(data, indent=2))
 
-        checkout_session = Stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=data['items'],
-            mode='payment',
-            success_url="http://localhost:8787/success",
-            cancel_url="http://localhost:8787/cancel",
-        )
-        return jsonify({'id': checkout_session.id})
-    except Exception as e:
-        print(e)
-        return jsonify(error=str(e)), 403
+    checkout_session = Stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=data['items'],
+        mode='payment',
+        success_url='http://localhost:8787/success',
+        cancel_url='http://localhost:8787/cancel',
+    )
+
+    # FIXME: Catch the specific error for auth only
+    #   return jsonify(error=str(e)), 403
+
+    return jsonify({'id': checkout_session.id})
 
 
-@app.route("/webhook", methods=['POST'])
+@blueprint_order.route('/webhook', methods=['POST'])
 def webhook():
-    print('WEBHOOK CALLED')
+    """Endpoint for the system webhook."""
+    print('WEBHOOK CALLED')  # FIXME: To be removed
 
-    if request.content_length > 1024**2:
+    if request.content_length > 1024 ** 2:
         print('Request too large')
         abort(400)
 
     payload = request.get_data()
     sig_header = request.environ.get('HTTP_STRIPE_SIGNATURE')
-    event = None
+    # event = None
 
     try:
         event = Stripe.Webhook.construct_event(
             payload, sig_header, os.getenv('STRIPE_ENDPOINT_SECRET')
         )
-    except ValueError as e:
+    except ValueError as ex:
         # invalid payload
-        return "Invalid payload", 400
-    except Stripe.error.SignatureVerificationError as e:
+        print('Invalid webhook payload', ex)
+        # FIXME: Consider return json for consistency
+        return 'Invalid payload', 400
+    except SignatureVerificationError as ex:
         # invalid signature
-        return "Invalid signature", 400
+        print('Invalid webhook signature', ex)
+        # FIXME: Consider return json for consistency
+        return 'Invalid signature', 400
 
     event_dict = event.to_dict()
 
-    if event_dict['type'] == "checkout.session.completed":
+    if event_dict['type'] == 'checkout.session.completed':
         session = event['data']['object']
 
-        print('SUCCESS!')
+        print('SUCCESS!', session)
 
         # if store_donation(session) == 0:
         #     print('DB Success')
         # else:
         #     print('DB Failure')
 
-    return "OK", 200
+    return 'OK', 200
+
 
 # def store_donation(session):
 #     cur = None
@@ -96,7 +114,7 @@ def webhook():
 #
 #         payment_intent = Stripe.PaymentIntent.retrieve(session.payment_intent,)
 #
-#         if payment_intent.status == "succeeded":
+#         if payment_intent.status == 'succeeded':
 #             tid = payment_intent.id
 #             name = payment_intent.charges.data[0].billing_details.name
 #             email = payment_intent.charges.data[0].billing_details.email
@@ -106,7 +124,8 @@ def webhook():
 #             date_of_purchase = datetime.fromtimestamp(
 #                 int(timestamp)).strftime('%Y-%m-%d')
 #
-#             cur.execute('''INSERT INTO donation_transactions(full_name, email_address, tid, transaction_date, card_used)
+#             cur.execute('''INSERT INTO donation_transactions(full_name, email_address, tid, transaction_date,
+#             card_used)
 #                 VALUES('{}', '{}', '{}', '{}', '{}')
 #             '''.format(name, email, tid, date_of_purchase, last_four)
 #             )
@@ -126,11 +145,13 @@ def webhook():
 #         return 1
 
 
-@app.route("/success", methods=['GET'])
+@blueprint_order.route('/success', methods=['GET'])
 def success():
+    """Endpoint used by stripe for obtaining the response of order success."""
     return 'Purchase successful. Thank you!'
 
 
-@app.route("/cancel", methods=['GET'])
+@blueprint_order.route('/cancel', methods=['GET'])
 def cancel():
+    """Endpoint used by stripe for obtaining the response of order cancellation."""
     return 'Purchase cancelled.'
