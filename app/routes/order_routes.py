@@ -5,7 +5,6 @@ from flask import Blueprint, abort, jsonify, request
 from stripe.error import SignatureVerificationError
 
 from app.config import Stripe
-from app.controllers import OrderController
 
 __all__ = ('blueprint_order',)
 
@@ -16,7 +15,7 @@ blueprint_order = Blueprint('order', __name__)
 def get_order(order_id):
     """Get the order at ``order_id``."""
     # TODO: Define and document order not exists behavior
-    print(order_id)  # Dummy call for checking the argument
+    print(order_id)  # Dummy print to check the argument
 
 
 @blueprint_order.route('/orders', methods=['GET'])
@@ -31,23 +30,13 @@ def create_order(order):
     print(order)  # Dummy call for checking the argument
 
 
-@blueprint_order.route('/test_order', methods=['POST'])
-def test_order():
-    """Dummy endpoint for testing."""
-    # FIXME: Should delete after testing
-    OrderController.test_order()
-    return 'tested'
-
-
 @blueprint_order.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     """Endpoint to create a checkout session."""
     if request.content_length > 1024 ** 2:
-        print('Request too large')
         abort(400)
 
     data = request.get_json()
-    # print(json.dumps(data, indent=2))
 
     checkout_session = Stripe.checkout.Session.create(
         payment_method_types=['card'],
@@ -66,10 +55,7 @@ def create_checkout_session():
 @blueprint_order.route('/webhook', methods=['POST'])
 def webhook():
     """Endpoint for the system webhook."""
-    print('WEBHOOK CALLED')  # FIXME: To be removed
-
     if request.content_length > 1024 ** 2:
-        print('Request too large')
         abort(400)
 
     payload = request.get_data()

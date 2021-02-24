@@ -83,7 +83,6 @@ class MenuController:
         """Get the product price by ``item_id``."""
         price_data = Stripe.Price.list(product=item_id)
         price_id = price_data['data'][0]['id']
-        print(price_id)  # TODO: Remove debugging purpose price ID?
         return price_id
 
     @staticmethod
