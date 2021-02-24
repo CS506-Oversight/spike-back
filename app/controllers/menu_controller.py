@@ -125,7 +125,6 @@ class MenuController:
 
         for prop in properties:
             if prop == 'price':
-                price_id = self.get_product_price_id(item_id)
                 self.update_stripe_price(item_id, properties[prop])
             if prop == 'description':
                 Stripe.Product.modify(item_id, description=properties[prop])
