@@ -1,0 +1,12 @@
+# Code quality check
+bandit
+pydocstyle
+flake8
+pylint
+coverage
+
+# Testing framework
+pytest
+
+# Other necessary requirements
+-r requirements.txt

@@ -1,7 +1,6 @@
+"""Configuration for FB auth via Firebase."""
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import auth
-from firebase_admin import firestore
+from firebase_admin import auth, credentials, firestore
 
 # Use a service account
 cred = credentials.Certificate('app/serviceAccountKey.json')

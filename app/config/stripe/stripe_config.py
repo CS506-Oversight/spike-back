@@ -1,6 +1,8 @@
-import stripe
+"""Configuration for Stripe."""
 from os import environ
-from dotenv import load_dotenv, find_dotenv
+
+import stripe
+from dotenv import find_dotenv, load_dotenv
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
