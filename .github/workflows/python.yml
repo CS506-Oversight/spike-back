@@ -2,6 +2,11 @@ name: CI
 
 on: [ push ]
 
+env:
+  FLASK_APP: run
+  FLASK_ENV: production
+  FIREBASE_ACCOUNT_KEY: ${{ secrets.FIREBASE_ACCOUNT_KEY }}
+
 jobs:
   quality-check:
     name: Code Quality Check

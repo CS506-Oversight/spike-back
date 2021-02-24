@@ -4,7 +4,7 @@
 [![badge-cq-badge]][badge-cq-link]
 [![badge-coverage-badge]][badge-coverage-link]
 
-### Getting Started
+## Getting Started
 
 1. Clone the repository using the `git clone <repository url>`
 2. In the root folder of the application create a virtual environment via the
@@ -12,16 +12,20 @@
 3. Activate the virtual environment: `source  <virtualenv_name>/bin/activate`
 4. Install dependencies from requirements.txt: `pip install -r requirements.txt`
 
-### Running the App
+## Running the App
 
-1. Set the FLASK_APP variable to run.py which is our Flask entry point:
+1. Set the `FLASK_APP` variable to run.py which is our Flask entry point:
     ```bash
     export FLASK_APP=run.py 
     export FLASK_ENV=development
     ```
+2. Obtain the Firebase service account credential from Firebase Project Settings > Servide Accounts > Generate Private
+   Key, and either
+    - Place the obtained file at `app/serviceAccountKey.json`
+    - Set the content as an environment variable `FIREBASE_ACCOUNT_KEY`
 2. Run the app: `flask run`
 
-### Basic File Structure
+## Basic File Structure
 
 ```
 .
@@ -41,7 +45,7 @@
 - **models** - should consist of classes that create the objects stored in the database
 - **routes** - all the routes we need to server
 
-# IMPORTANT NOTES
+## **IMPORTANT NOTES**
 
 - ALWAYS DO WORK IN THE VIRTUAL ENVIRONMENT
 - When installing packages make sure that requirements.txt is updated using:
