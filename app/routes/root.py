@@ -3,11 +3,10 @@ from flask import Blueprint
 
 __all__ = ('blueprint_root',)
 
-blueprint_root = Blueprint('order', __name__)
+blueprint_root = Blueprint('root', __name__)
 
 
 @blueprint_root.route('/', methods=['GET'])
-def get_users():
-    """Endpoint to get the users (?)."""
-    # TODO: Finish implementing or remove
-    return 'Server is running...'
+def root():
+    """Root endpoint that only checks if the server is running."""
+    return 'Server is running...'  # FIXME: Change to json response

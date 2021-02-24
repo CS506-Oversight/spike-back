@@ -5,7 +5,7 @@ from app.controllers import StaffController
 
 __all__ = ('blueprint_staff',)
 
-blueprint_staff = Blueprint('order', __name__)
+blueprint_staff = Blueprint('staff', __name__)
 
 
 @blueprint_staff.route('/in_stock/<product_id>', methods=['POST'])

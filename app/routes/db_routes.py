@@ -5,7 +5,7 @@ from app.config import fb_db
 
 __all__ = ('blueprint_db',)
 
-blueprint_db = Blueprint('auth', __name__)
+blueprint_db = Blueprint('db', __name__)
 
 menu_ref = fb_db.collection('Menu')
 

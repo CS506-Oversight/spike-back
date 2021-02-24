@@ -7,6 +7,7 @@ coverage
 
 # Testing framework
 pytest
+pytest-flask
 
 # Other necessary requirements
 -r requirements.txt

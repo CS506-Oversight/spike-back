@@ -1,3 +1,16 @@
+import pytest
+
+from app import create_app
+
+
+# region `pytest` fixtures
+@pytest.fixture
+def app():
+    return create_app()
+
+
+# endregion
+
 # region `pytest` hooks
 def pytest_addoption(parser):
     parser.addoption("--slow", action="store_true", dest="slow", default=False,

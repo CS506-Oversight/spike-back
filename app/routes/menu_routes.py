@@ -8,7 +8,7 @@ from app.models import MenuItem
 
 __all__ = ('blueprint_menu',)
 
-blueprint_menu = Blueprint('auth', __name__)
+blueprint_menu = Blueprint('menu', __name__)
 
 
 @blueprint_menu.route('/get_menu', methods=['GET'])
