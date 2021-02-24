@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # ------ Variables
 
 CLR_RED=[31m
