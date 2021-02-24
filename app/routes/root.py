@@ -1,8 +1,12 @@
-from app import app
-from flask import request, jsonify
-import json
+"""Root routes."""
+from flask import Blueprint
+
+__all__ = ('blueprint_root',)
+
+blueprint_root = Blueprint('root', __name__)
 
 
-@app.route("/", methods=['GET'])
-def get_users():
-    return 'Server is running...'
+@blueprint_root.route('/', methods=['GET'])
+def root():
+    """Root endpoint that only checks if the server is running."""
+    return 'Server is running...'  # FIXME: Change to json response

@@ -1,85 +1,93 @@
-from app.config.firebase.fb_config import db
-from app.config.stripe.stripe_config import Stripe
-from app.models.menu_model import MenuItem
-import json
+"""Controller implementations for item menu."""
+from app.config import Stripe, fb_db
+
+__all__ = ('MenuController',)
 
 
 class MenuController:
-    def get_all_menu_items(self):
-        final_menu = {"menu": []}
-        col_ref = db.collection(u'Menu')
+    """Controller for menu items."""
 
-        try:
-            doc_ref = col_ref.get()
-            for doc in doc_ref:
-                final_menu['menu'].append(doc.to_dict())
+    @staticmethod
+    def get_all_menu_items():
+        """
+        Get all menu items.
 
-            return final_menu
-        except Exception as e:
-            return None
+        Returns ``None`` if any exceptions occur during the fetch.
+        """
+        final_menu = {'menu': []}
+        col_ref = fb_db.collection('Menu')
 
-    def get_menu_item_by_id(self, item_id):
-        try:
-            doc_ref = db.collection(u'Menu').document(item_id)
+        doc_ref = col_ref.get()
+        for doc in doc_ref:
+            final_menu['menu'].append(doc.to_dict())
 
-            doc = doc_ref.get()
-            if doc.exists:
-                return doc.to_dict()
-            else:
-                raise Exception('Menu item does not exist!')
-        except Exception as e:
-            return None
+        return final_menu
 
-    def create_menu_item(self, menu_item):
-        try:
-            # registers a new product
-            new_product = Stripe.Product.create(
-                name=menu_item.item_name,
-                type="good",
-                description=menu_item.item_desc,
-                images=[menu_item.img],
-                metadata={
-                    "Type": menu_item.item_type
-                }
-            )
-            # registers a new price and binds it to the new product made above
-            Stripe.Price.create(
-                unit_amount=int(menu_item.item_price * 100),
-                currency="usd",
-                product=new_product["id"])
+    @staticmethod
+    def get_menu_item_by_id(item_id):
+        """
+        Get a menu item by its ``item_id``.
 
-            new_menu_item = {
-                "name": menu_item.item_name,
-                "description": menu_item.item_desc,
-                "price": menu_item.item_price,
-                "item_id": new_product['id'],
-                "type": menu_item.item_type,
-                "img": menu_item.img,
-                "in_stock": menu_item.in_stock
+        Returns ``None`` if any exceptions occur during the fetch.
+        """
+        doc_ref = fb_db.collection('Menu').document(item_id)
+
+        doc = doc_ref.get()
+        if not doc.exists:
+            raise Exception('Menu item does not exist!')
+
+        return doc.to_dict()
+
+    @staticmethod
+    def create_menu_item(menu_item):
+        """Create a new menu item."""
+        # registers a new product
+        new_product = Stripe.Product.create(
+            name=menu_item.item_name,
+            type='good',
+            description=menu_item.item_desc,
+            images=[menu_item.img],
+            metadata={
+                'Type': menu_item.item_type
             }
+        )
+        # registers a new price and binds it to the new product made above
+        Stripe.Price.create(
+            unit_amount=int(menu_item.item_price * 100),
+            currency='usd',
+            product=new_product['id'])
 
-            db.collection(u'Menu').document(new_product['id']).set(new_menu_item)
+        new_menu_item = {
+            'name': menu_item.item_name,
+            'description': menu_item.item_desc,
+            'price': menu_item.item_price,
+            'item_id': new_product['id'],
+            'type': menu_item.item_type,
+            'img': menu_item.img,
+            'in_stock': menu_item.in_stock
+        }
 
-            return new_product["id"]
+        fb_db.collection('Menu').document(new_product['id']).set(new_menu_item)
 
-        except Exception as e:
-            return None
+        return new_product['id']
 
-    def delete_menu_item(self, item_id):
-        try:
-            db.collection(u'Menu').document(item_id).delete()
-            Stripe.Product.modify(item_id, active="false")
-            return item_id
-        except Exception as e:
-            return None
+    @staticmethod
+    def delete_menu_item(item_id):
+        """Delete a menu item at ``item_id``."""
+        fb_db.collection('Menu').document(item_id).delete()
+        Stripe.Product.modify(item_id, active='false')
+        return item_id
 
-    def get_product_price_id(self, item_id):
+    @staticmethod
+    def get_product_price_id(item_id):
+        """Get the product price by ``item_id``."""
         price_data = Stripe.Price.list(product=item_id)
-        price_id = price_data["data"][0]["id"]
-        print(price_id)
+        price_id = price_data['data'][0]['id']
         return price_id
 
-    def update_stripe_price(self, item_id, updated_price):
+    @staticmethod
+    def update_stripe_price(item_id, updated_price):
+        """Update the price of ``item_id`` to ``updated_price`` on stripe."""
         target_price = int(updated_price * 100)
         price_list = Stripe.Price.list(product=item_id)
         data = price_list['data']
@@ -97,35 +105,34 @@ class MenuController:
                     Stripe.Price.modify(price_obj['id'], active=False)
 
         if not price_exists:
-            new_price = Stripe.Price.create(
+            Stripe.Price.create(
                 unit_amount=int(updated_price * 100),
-                currency="usd",
+                currency='usd',
                 product=item_id,
-                active=True)
+                active=True)  # new_price
 
-        return
-
-
-    def update_menu_item(self, item_id, properties):
+    @classmethod
+    def update_menu_item(cls, item_id, properties):
         """
-        Updates a menu item based in what the user wants to change. A user should only
-        be able to change the following properties if a given menu item:
-            - name
-            - desc
-            - price
-            - in_stock
-            - type
-            - img
-        """
+        Updates a menu item based on what the user wants to change.
 
-        doc_ref = db.collection('Menu')
+        A user is only permitted to change the following properties
+        of a given menu item:
+        - name
+        - desc
+        - price
+        - in_stock
+        - type
+        - img
+        """
+        doc_ref = fb_db.collection('Menu')
         doc = doc_ref.document(item_id)
 
         doc.update(properties)
 
         for prop in properties:
             if prop == 'price':
-                self.update_stripe_price(item_id, properties[prop])
+                cls.update_stripe_price(item_id, properties[prop])
             if prop == 'description':
                 Stripe.Product.modify(item_id, description=properties[prop])
             if prop == 'in_stock':

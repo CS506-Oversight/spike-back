@@ -50,6 +50,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+cobertura.xml
 
 # Translations
 *.mo
@@ -109,6 +110,7 @@ celerybeat.pid
 .flaskenv
 .venv
 env/
+venv/
 venv3/
 ENV/
 env.bak/
@@ -139,8 +141,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-#IDE
+# IDE
 .idea/
 
-#config
+# config
 /app/serviceAccountKey.json
+
+# Misc
+.wakatime-project
