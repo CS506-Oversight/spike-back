@@ -80,13 +80,15 @@ class MenuController:
 
     @staticmethod
     def get_product_price_id(item_id):
+        """Get the product price by ``item_id``."""
         price_data = Stripe.Price.list(product=item_id)
         price_id = price_data["data"][0]["id"]
-        print(price_id)
+        print(price_id)  # TODO: Remove debugging purpose price ID?
         return price_id
 
     @staticmethod
     def update_stripe_price(item_id, updated_price):
+        """Update the price of ``item_id`` to ``updated_price`` on stripe."""
         target_price = int(updated_price * 100)
         price_list = Stripe.Price.list(product=item_id)
         data = price_list['data']
@@ -109,8 +111,6 @@ class MenuController:
                 currency="usd",
                 product=item_id,
                 active=True)  # new_price
-
-        return
 
     @classmethod
     def update_menu_item(cls, item_id, properties):
