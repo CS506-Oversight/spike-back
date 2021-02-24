@@ -56,5 +56,10 @@ def update_user(username):
     user = UserController.update_user(username, properties)
     return user, 201
 
-#editUser
-#deleteUser
+@app.route('/delete_user/<string:username>', methods=['DELETE'])
+def delete_user(username):
+    username = UserController.delete_user(username)
+    if username:
+        return jsonify({"status": "Success", "message": f'User with username {username} has been deleted.'}), 200
+
+    return jsonify({"status": "Failed", "message": f'There was a problem deleting the user.'}), 500
