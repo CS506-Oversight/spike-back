@@ -75,14 +75,14 @@ class MenuController:
     def delete_menu_item(item_id):
         """Delete a menu item at ``item_id``."""
         fb_db.collection('Menu').document(item_id).delete()
-        Stripe.Product.modify(item_id, active="false")
+        Stripe.Product.modify(item_id, active='false')
         return item_id
 
     @staticmethod
     def get_product_price_id(item_id):
         """Get the product price by ``item_id``."""
         price_data = Stripe.Price.list(product=item_id)
-        price_id = price_data["data"][0]["id"]
+        price_id = price_data['data'][0]['id']
         print(price_id)  # TODO: Remove debugging purpose price ID?
         return price_id
 
@@ -108,7 +108,7 @@ class MenuController:
         if not price_exists:
             Stripe.Price.create(
                 unit_amount=int(updated_price * 100),
-                currency="usd",
+                currency='usd',
                 product=item_id,
                 active=True)  # new_price
 

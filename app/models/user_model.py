@@ -1,10 +1,16 @@
 """Data model for an user."""
+from dataclasses import dataclass
 
+__all__ = ('User',)
+
+
+@dataclass
 class User:
-    def __init__(self, username, password, phone, address, email, type="staff"):
-        self.username = username
-        self.email = email
-        self.password = password
-        self.phone = phone
-        self.address = address
-        self.type = type
+    """User data model."""
+
+    username: str
+    password: str
+    phone: str
+    address: str
+    email: str
+    type: str  # TODO: change to enum?

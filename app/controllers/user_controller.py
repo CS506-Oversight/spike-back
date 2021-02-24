@@ -1,57 +1,59 @@
-from app.config.firebase.fb_config import db
-from app.models.user_model import User
-from flask import jsonify
-import json
+"""Implementation for controlling the user data."""
 import bcrypt
 
+from app.config import fb_db
+
+__all__ = ('UserController',)
+
+
 class UserController:
-    def create_user(self, user):
-        try:
-            new_user = {
-                "username": user.username,
-                "password": user.password,
-                "phone": user.phone,
-                "address": user.address,
-                "type": user.type,
-                "email": user.email,
-            }
+    """User data controller."""
 
-            db.collection(u'Users').document(user.username).set(new_user)
+    @staticmethod
+    def create_user(user):
+        """Create a new user data."""
+        new_user = {
+            'username': user.username,
+            'password': user.password,
+            'phone': user.phone,
+            'address': user.address,
+            'type': user.type,
+            'email': user.email,
+        }
 
-            return user.username
-        except Exception as e:
-            return None
+        fb_db.collection('Users').document(user.username).set(new_user)
 
-    def getUser(self, username):
-        final_user = {}
-        try:
-            user = db.collection(u'Users').document(username).get()
-            #print(user)
-            user_dic = user.to_dict()
-            del user_dic["password"]
-            return user_dic
-        except Exception as e:
-            return None
+        return user.username
 
-    def update_user(self, username, properties):
-        doc_ref = db.collection('Users')
+    @staticmethod
+    def get_user(username):
+        """Get the user data of ``user_name``."""
+        user = fb_db.collection('Users').document(username).get()
+
+        user_dic = user.to_dict()
+        del user_dic['password']
+        return user_dic
+
+    @classmethod
+    def update_user(cls, username, properties):
+        """Update the ``properties`` of the user data ``username``."""
+        doc_ref = fb_db.collection('Users')
         doc = doc_ref.document(username)
-        print(properties)
+
         keys = properties.keys()
-        print(keys)
-        if "password" in keys:
-            password = properties["password"].encode('utf8')
+
+        if 'password' in keys:
+            password = properties['password'].encode('utf8')
             hashed = bcrypt.hashpw(password, bcrypt.gensalt())
-            properties["password"] = password
-        if "username" in keys:
-            del properties["username"]
+            properties['password'] = hashed
+        if 'username' in keys:
+            del properties['username']
         doc.update(properties)
-        user = self.getUser(username)
+        user = cls.get_user(username)
         return user
 
-    def delete_user(self, username):
-        try:
-            db.collection(u'Users').document(username).delete()
-            return username
-        except Exception as e:
-            return None
+    @staticmethod
+    def delete_user(username):
+        """Delete the user at ``username``."""
+        fb_db.collection('Users').document(username).delete()
+        return username

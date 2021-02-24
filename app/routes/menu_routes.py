@@ -32,7 +32,7 @@ def get_menu_item(item_id):
     """
     data = MenuController.get_menu_item_by_id(item_id)
     if not data:
-        # FIXME: Should be 404 though, 400 means "the server could not understand the request"
+        # FIXME: Should be 404 though, 400 means 'the server could not understand the request'
         return jsonify({
             'status': 400,
             'message': f'Request could not be made. Check that an item with the id {item_id} actually exists.'
@@ -68,7 +68,7 @@ def update_menu_item(item_id):
     """Endpoint for updating a menu item."""
     properties = json.loads(request.data)
     item_id = MenuController.update_menu_item(item_id, properties)
-    return jsonify({"status": "Success", "message": f'Item with id {item_id} successfully updated.'}), 201
+    return jsonify({'status': 'Success', 'message': f'Item with id {item_id} successfully updated.'}), 201
 
 
 @blueprint_menu.route('/delete_menu_item/<string:item_id>', methods=['DELETE'])

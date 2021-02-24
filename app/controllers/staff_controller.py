@@ -19,7 +19,7 @@ class StaffController:
         # FIXME: Add documentation
         SKU = Stripe.SKU.list(product=prod_id)
         Stripe.SKU.modify(
-            SKU["data"][0]["id"],
+            SKU['data'][0]['id'],
             active=True,
         )  # FIXME: `updated` unused
         updated_product = Stripe.Product.modify(
@@ -34,7 +34,7 @@ class StaffController:
         # FIXME: Add documentation
         SKU = Stripe.SKU.list(product=prod_id)
         Stripe.SKU.modify(
-            SKU["data"][0]["id"],
+            SKU['data'][0]['id'],
             active=False,
         )  # FIXME: `updated` unused
         updated_product = Stripe.Product.modify(
