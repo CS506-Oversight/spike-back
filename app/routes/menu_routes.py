@@ -49,7 +49,7 @@ def create_menu_item():
 def update_menu_item(item_id):
     properties = json.loads(request.data)
     item_id = MenuController.update_menu_item(item_id, properties)
-    return 400
+    return jsonify({"status": "Success", "message": f'Item with id {item_id} successfully updated.'}), 201
 
 
 @app.route('/delete_menu_item/<string:item_id>', methods=['DELETE'])
