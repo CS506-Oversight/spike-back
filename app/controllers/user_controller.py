@@ -34,6 +34,24 @@ class UserController:
         del user_dic['password']
         return user_dic
 
+    @staticmethod
+    def get_hashed(username):
+        """Get the hashed password of ``user_name``."""
+        user = fb_db.collection('Users').document(username).get()
+        user_dic = user.to_dict()
+        return user_dic['password']
+
+    @staticmethod
+    def check_username(username):
+        """check if``user_name``is in DB."""
+        user = fb_db.collection('Users').document(username).get()
+        user_dic = user.to_dict()
+        #print(user_dic)
+        if user_dic is None:
+            return False
+        else:
+            return True
+
     @classmethod
     def update_user(cls, username, properties):
         """Update the ``properties`` of the user data ``username``."""
