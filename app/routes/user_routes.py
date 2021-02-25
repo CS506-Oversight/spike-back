@@ -43,7 +43,7 @@ def check_pass():
             user = UserController.get_user(data['username'])
             return jsonify(user), 200
         else:
-            return jsonify({'status': 'Failed', 'message': 'Password did not match'}), 401
+            return jsonify({'status': 'Failed', 'message': 'wPassword did not match'}), 401
     else:
         return jsonify({'status': 'Failed', 'message': 'Not a valid username'}), 401
 
@@ -77,4 +77,4 @@ def delete_user(username):
 
     return jsonify({'status': 'Failed', 'message': 'There was a problem deleting the user.'}), 500
 
-# TODO: editUser
+
