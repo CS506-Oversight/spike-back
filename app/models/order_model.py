@@ -9,6 +9,8 @@ __all__ = ('Order',)
 class Order:
     """Data model for an order."""
 
+    # pylint: disable=too-many-instance-attributes
+
     order_id: str
     order_subtotal: float
     order_total: float

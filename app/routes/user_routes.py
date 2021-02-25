@@ -41,12 +41,12 @@ def check_pass():
         if bcrypt.checkpw(password, hashed):
             user = UserController.get_user(data['username'])
             return jsonify(user), 200
-        else:
-            return jsonify({'status': 'Failed', 'message': 'wPassword did not match'}), 401
-    else:
+
         return jsonify({'status': 'Failed', 'message': 'Not a valid username'}), 401
 
-      
+    return jsonify({'status': 'Failed', 'message': 'Not a valid username'}), 401
+
+
 @blueprint_user.route('/get_user/<string:username>', methods=['GET'])
 def get_user(username):
     """Get the user data of ``username``."""
@@ -73,5 +73,3 @@ def delete_user(username):
         return jsonify({'status': 'Success', 'message': f'User with username {username} has been deleted.'}), 200
 
     return jsonify({'status': 'Failed', 'message': 'There was a problem deleting the user.'}), 500
-
-

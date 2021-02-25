@@ -43,14 +43,14 @@ class UserController:
 
     @staticmethod
     def check_username(username):
-        """check if``user_name``is in DB."""
+        """Check if``user_name``is in DB."""
         user = fb_db.collection('Users').document(username).get()
         user_dic = user.to_dict()
 
-        if user_dic is None:
-            return False
-        else:
+        if user_dic:
             return True
+
+        return False
 
     @classmethod
     def update_user(cls, username, properties):
