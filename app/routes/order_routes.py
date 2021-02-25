@@ -1,8 +1,11 @@
 """Routes for performing actions related to order."""
 import os
 
+import json
+
 from flask import Blueprint, abort, jsonify, request
 from stripe.error import SignatureVerificationError
+from app.controllers import OrderController
 
 from app.config import Stripe
 
@@ -20,14 +23,30 @@ def get_order(order_id):
 
 @blueprint_order.route('/orders', methods=['GET'])
 def get_orders():
-    """Get all available orders."""
+    """Get all available orders.
+
+    Information of the user should be passed in. Specifically,
+    their UID. Certain data will be returned based on who the user is.
+    """
+
+    data = json.loads(request.data)
+    uid = data['uid']
+
+    orders = OrderController.get_orders(uid)
+
+    return jsonify(orders), 200
 
 
-@blueprint_order.route('/create_order', methods=['POST'])
-def create_order(order):
-    """Create an ``order``."""
-    # TODO: Define and document the order-failed-to-create behavior
-    print(order)  # Dummy call for checking the argument
+@blueprint_order.route('/complete_order', methods=['POST'])
+def complete_order():
+    """Allows orders to be marked as completed."""
+
+
+# @blueprint_order.route('/create_order', methods=['POST'])
+# def create_order(order):
+#     """Create an ``order``."""
+#     # TODO: Define and document the order-failed-to-create behavior
+#     print(order)  # Dummy call for checking the argument
 
 
 @blueprint_order.route('/create-checkout-session', methods=['POST'])
@@ -44,6 +63,7 @@ def create_checkout_session():
         mode='payment',
         success_url='http://localhost:8787/success',
         cancel_url='http://localhost:8787/cancel',
+        metadata=data['metadata']
     )
 
     # FIXME: Catch the specific error for auth only
@@ -60,7 +80,7 @@ def webhook():
 
     payload = request.get_data()
     sig_header = request.environ.get('HTTP_STRIPE_SIGNATURE')
-    # event = None
+    event = None
 
     try:
         event = Stripe.Webhook.construct_event(
@@ -68,67 +88,22 @@ def webhook():
         )
     except ValueError as ex:
         # invalid payload
-        print('Invalid webhook payload', ex)
-        # FIXME: Consider return json for consistency
-        return 'Invalid payload', 400
+        return jsonify({'message': 'Invalid payload.'}), 400
     except SignatureVerificationError as ex:
         # invalid signature
-        print('Invalid webhook signature', ex)
-        # FIXME: Consider return json for consistency
-        return 'Invalid signature', 400
+        return jsonify({'message': 'Invalid signature.'}), 400
 
     event_dict = event.to_dict()
 
     if event_dict['type'] == 'checkout.session.completed':
         session = event['data']['object']
 
-        print('SUCCESS!', session)
+        order_id = OrderController.create_order(session)
 
-        # if store_donation(session) == 0:
-        #     print('DB Success')
-        # else:
-        #     print('DB Failure')
+        if order_id:
+            return {'order_id': order_id, 'message': 'Order was successfully placed.'}, 201
 
     return 'OK', 200
-
-
-# def store_donation(session):
-#     cur = None
-#
-#     try:
-#         cur = db.connection.cursor()
-#
-#         payment_intent = Stripe.PaymentIntent.retrieve(session.payment_intent,)
-#
-#         if payment_intent.status == 'succeeded':
-#             tid = payment_intent.id
-#             name = payment_intent.charges.data[0].billing_details.name
-#             email = payment_intent.charges.data[0].billing_details.email
-#             last_four = payment_intent.charges.data[0].payment_method_details.card.last4
-#
-#             timestamp = payment_intent.charges.data[0].created
-#             date_of_purchase = datetime.fromtimestamp(
-#                 int(timestamp)).strftime('%Y-%m-%d')
-#
-#             cur.execute('''INSERT INTO donation_transactions(full_name, email_address, tid, transaction_date,
-#             card_used)
-#                 VALUES('{}', '{}', '{}', '{}', '{}')
-#             '''.format(name, email, tid, date_of_purchase, last_four)
-#             )
-#
-#             # db.connection.commit()
-#             cur.close()
-#
-#             return 0
-#
-#     except Exception as e:
-#         if cur:
-#             # TODO: add a rollback before closing
-#             cur.close()
-#
-#         print(e)
-#
-#         return 1
 
 
 @blueprint_order.route('/success', methods=['GET'])

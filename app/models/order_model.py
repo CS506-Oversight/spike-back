@@ -11,8 +11,9 @@ class Order:
 
     order_id: str
     order_subtotal: float
+    order_total: float
     order_tax: float
-    customer_name: str
-    customer_email: str
+    customer_id: str
     items_ordered: list[str]  # a list of menu item IDs
+    in_progress: bool
     order_date: datetime  # TODO: Check if this needs some transformation to store it in the db or not
