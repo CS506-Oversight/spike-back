@@ -10,8 +10,21 @@ class OrderController:
     """Controller for orders."""
 
     @staticmethod
-    def get_order(order_id):
+    def get_order(user_id, user_role, order_id):
         """Get the order at ``order_id``."""
+        order_ref = fb_db.collection('Orders')
+        order = {'order': None}
+        res = None
+
+        if user_role == 'admin' or user_role == 'staff':
+            res = order_ref.document(order_id).get()
+            order['order'] = res.to_dict()
+        elif user_role == 'customer':
+            query = order_ref.where('customer_id', '==', user_id).where('order_id', '==', order_id)
+            res = query.get()
+            order['order'] = res[0].to_dict()
+
+        return order
 
     @staticmethod
     def get_orders(uid):
@@ -74,5 +87,11 @@ class OrderController:
         return order_id
 
     @staticmethod
-    def complete_order():
+    def complete_order(order_id):
         """Allows orders to be marked as completed."""
+        order_ref = fb_db.collection('Orders')
+        order = order_ref.document(order_id)
+
+        order.update({'in_progress': False})
+
+        return order_id
