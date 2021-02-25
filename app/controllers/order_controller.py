@@ -13,6 +13,8 @@ class OrderController:
     def get_order(order_id):
         """Get the order at ``order_id``."""
 
+
+
     @staticmethod
     def get_orders(uid):
         """Get all orders."""
@@ -44,6 +46,7 @@ class OrderController:
 
     @staticmethod
     def create_order(session):
+        print("creating order")
         """Create an ``order``."""
 
         # TODO: ADD SOME TESTING TO THIS!!!
@@ -76,3 +79,4 @@ class OrderController:
     @staticmethod
     def complete_order():
         """Allows orders to be marked as completed."""
+
