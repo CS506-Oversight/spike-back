@@ -49,12 +49,15 @@ def check_pass():
 
 @blueprint_user.route('/get_user/<string:username>', methods=['GET'])
 def get_user(username):
-    """Get the user data of ``username``."""
-    data = UserController.get_user(username)
-    if not data:
-        return jsonify({'status': 'Failed', 'message': 'Password did not match'}), 401
-
-    return jsonify(data), 200
+    """Get the user data of username."""
+    if UserController.check_username(data["username"]):
+        data = UserController.get_user(username)
+        if data:
+            return jsonify(data), 200
+        else:
+            return jsonify({'status': 'Failed', 'message': 'Not a valid Username'}), 401
+    else:
+        return jsonify({'status': 'Failed', 'message': 'Not a valid Username'}), 401
 
 
 @blueprint_user.route('/update_user/<string:username>', methods=['POST'])
