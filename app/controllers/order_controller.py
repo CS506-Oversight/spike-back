@@ -47,7 +47,7 @@ class OrderController:
 
         # customers can ONLY see their orders
         elif user_type == 'customer':
-            query = order_ref.where('customer_id', '==', uid).get()  # TODO: NEED TO FIND CORRECT QUERY ACTIONS
+            query = order_ref.where('customer_id', '==', uid).get()
 
             # this does the check if the query is empty (i.e. returns empty array)
             for order in query:
@@ -59,11 +59,7 @@ class OrderController:
 
     @staticmethod
     def create_order(session):
-        print("creating order")
         """Create an ``order``."""
-
-        # TODO: ADD SOME TESTING TO THIS!!!
-
         order_info = {
             'order_subtotal': session['amount_subtotal'] / 100,
             'order_total':  session['amount_total'] / 100,

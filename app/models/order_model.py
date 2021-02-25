@@ -16,4 +16,4 @@ class Order:
     customer_id: str
     items_ordered: list[str]  # a list of menu item IDs
     in_progress: bool
-    order_date: datetime  # TODO: Check if this needs some transformation to store it in the db or not
+    order_date: datetime
