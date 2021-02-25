@@ -6,6 +6,7 @@ __all__ = ('MenuController',)
 
 class MenuController:
     """Controller for menu items."""
+
     @staticmethod
     def get_all_menu_items():
         """

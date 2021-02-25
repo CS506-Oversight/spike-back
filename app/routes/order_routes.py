@@ -30,12 +30,12 @@ def get_order(order_id):
 
 @blueprint_order.route('/orders', methods=['GET'])
 def get_orders():
-    """Get all available orders.
+    """
+    Get all available orders.
 
     Information of the user should be passed in. Specifically,
     their UID. Certain data will be returned based on who the user is.
     """
-
     data = json.loads(request.data)
     uid = data['uid']
 
@@ -92,9 +92,11 @@ def webhook():
         )
     except ValueError as ex:
         # invalid payload
+        print(ex)
         return jsonify({'message': 'Invalid payload.'}), 400
     except SignatureVerificationError as ex:
         # invalid signature
+        print(ex)
         return jsonify({'message': 'Invalid signature.'}), 400
 
     event_dict = event.to_dict()

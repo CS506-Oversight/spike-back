@@ -1,7 +1,6 @@
 """Controller implementations for orders."""
-from app.config import Stripe, fb_db
-
 from datetime import datetime
+from app.config import Stripe, fb_db
 
 __all__ = ('OrderController',)
 
@@ -16,7 +15,7 @@ class OrderController:
         order = {'order': None}
         res = None
 
-        if user_role == 'admin' or user_role == 'staff':
+        if user_role in ('admin', 'staff'):
             res = order_ref.document(order_id).get()
             order['order'] = res.to_dict()
         elif user_role == 'customer':
@@ -25,8 +24,6 @@ class OrderController:
             order['order'] = res[0].to_dict()
 
         return order
-
-
 
     @staticmethod
     def get_orders(uid):
@@ -40,7 +37,7 @@ class OrderController:
         order_ref = fb_db.collection('Orders')
 
         # admin or staff has the right to see ALL orders
-        if user_type == 'admin' or user_type == 'staff':
+        if user_type in ('admin', 'staff'):
             orders_docs = order_ref.get()
             for order in orders_docs:
                 orders['orders'].append(order.to_dict())
@@ -62,9 +59,9 @@ class OrderController:
         """Create an ``order``."""
         order_info = {
             'order_subtotal': session['amount_subtotal'] / 100,
-            'order_total':  session['amount_total'] / 100,
+            'order_total': session['amount_total'] / 100,
             'order_tax': session['total_details']['amount_tax'] / 100,
-            'order_id':  session['id'],
+            'order_id': session['id'],
             'customer_id': session['metadata']['customer_id'],
             'in_progress': True,
             'order_date': datetime.now()
@@ -81,7 +78,7 @@ class OrderController:
 
         order_info['items_ordered'] = item_list
 
-        doc_ref = fb_db.collection('Orders').document(order_id).set(order_info)
+        fb_db.collection('Orders').document(order_id).set(order_info)
 
         return order_id
 
