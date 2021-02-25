@@ -14,11 +14,18 @@ __all__ = ('blueprint_order',)
 blueprint_order = Blueprint('order', __name__)
 
 
-@blueprint_order.route('/order/<int:order_id>', methods=['GET'])
+@blueprint_order.route('/order/<string:order_id>', methods=['GET'])
 def get_order(order_id):
     """Get the order at ``order_id``."""
     # TODO: Define and document order not exists behavior
-    print(order_id)  # Dummy print to check the argument
+    data = json.loads(request.data)
+
+    user_id = data['user_id']
+    user_role = data['type']
+
+    order = OrderController.get_order(user_id, user_role, order_id)
+
+    return jsonify(order)
 
 
 @blueprint_order.route('/orders', methods=['GET'])
@@ -40,13 +47,10 @@ def get_orders():
 @blueprint_order.route('/complete_order', methods=['POST'])
 def complete_order():
     """Allows orders to be marked as completed."""
+    data = json.loads(request.data)
+    order_id = OrderController.complete_order(data['order_id'])
 
-
-# @blueprint_order.route('/create_order', methods=['POST'])
-# def create_order(order):
-#     """Create an ``order``."""
-#     # TODO: Define and document the order-failed-to-create behavior
-#     print(order)  # Dummy call for checking the argument
+    return jsonify({'status': 'Success', 'message': f'Order {order_id} successfully marked as completed.'}), 201
 
 
 @blueprint_order.route('/create-checkout-session', methods=['POST'])
