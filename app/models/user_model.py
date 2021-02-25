@@ -8,6 +8,7 @@ __all__ = ('User',)
 class User:
     """User data model."""
 
+    user_id: str
     username: str
     password: str
     phone: str
