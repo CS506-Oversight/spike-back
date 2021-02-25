@@ -9,10 +9,6 @@ from app.models import MenuItem
 __all__ = ('blueprint_menu',)
 
 blueprint_menu = Blueprint('menu', __name__)
-@blueprint_menu.route('/priceID_update', methods=['GET'])
-def priceID_update():
-    MenuController.price_all_menu_items()
-    return "done"
 
 
 @blueprint_menu.route('/get_menu', methods=['GET'])

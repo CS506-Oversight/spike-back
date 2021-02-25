@@ -46,7 +46,7 @@ class UserController:
         """check if``user_name``is in DB."""
         user = fb_db.collection('Users').document(username).get()
         user_dic = user.to_dict()
-        #print(user_dic)
+
         if user_dic is None:
             return False
         else:
@@ -58,14 +58,13 @@ class UserController:
         doc_ref = fb_db.collection('Users')
         doc = doc_ref.document(username)
 
-        keys = properties.keys()
-
-        if 'password' in keys:
+        if 'password' in properties:
             password = properties['password'].encode('utf8')
             hashed = bcrypt.hashpw(password, bcrypt.gensalt())
             properties['password'] = hashed
-        if 'username' in keys:
+        if 'username' in properties:
             del properties['username']
+
         doc.update(properties)
         user = cls.get_user(username)
         return user

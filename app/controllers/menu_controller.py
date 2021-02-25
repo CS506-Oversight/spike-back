@@ -6,28 +6,6 @@ __all__ = ('MenuController',)
 
 class MenuController:
     """Controller for menu items."""
-
-    @staticmethod
-    def price_all_menu_items():
-        """Update priceID on all menu items"""
-        col_ref = fb_db.collection('Menu')
-        doc_ref = col_ref.get()
-        for doc in doc_ref:
-            item = doc.to_dict()
-            #print(item)
-            #print("item_id")
-            item_ref = fb_db.collection('Menu').document(item["item_id"]).get()
-            #print(item_ref.to_dict())
-            priceItem = Stripe.Price.list(product=item["item_id"], active = True)
-            #print(priceItem)
-            priceID = priceItem["data"][0]["id"]
-            print(priceID)
-            fb_db.collection('Menu').document(item["item_id"]).update({"price_id": priceID})
-
-
-
-
-
     @staticmethod
     def get_all_menu_items():
         """
@@ -165,9 +143,9 @@ class MenuController:
                 Stripe.Product.modify(item_id, metadata={'Type': properties[prop]})
             if prop == 'name':
                 Stripe.Product.modify(item_id, name=properties[prop])
+
         price_id = cls.get_product_price_id(item_id)
         properties["price_id"] = price_id
-        print(properties)
 
         doc.update(properties)
         return item_id

@@ -60,14 +60,13 @@ def create_checkout_session():
         abort(400)
 
     data = request.get_json()
-    print(data)
 
     checkout_session = Stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=data['items'],
         mode='payment',
-        success_url='http://localhost:8787/success',
-        cancel_url='http://localhost:8787/cancel',
+        success_url='http://localhost:8787/success',  # change to frontend page
+        cancel_url='http://localhost:8787/cancel',  # change to frontend page
         metadata=data['metadata']
     )
 
