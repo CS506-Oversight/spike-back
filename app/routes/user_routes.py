@@ -35,7 +35,8 @@ def check_pass():
     """Check if the user passes the auth check."""
     data = json.loads(request.data)
     password = data['password'].encode('utf-8')
-
+    
+    print(data)
     #hashed = bcrypt.hashpw(password, bcrypt.gensalt())
     if (UserController.check_username(data["username"])):
         hashed = UserController.get_hashed(data["username"])
@@ -47,9 +48,7 @@ def check_pass():
     else:
         return jsonify({'status': 'Failed', 'message': 'Not a valid username'}), 401
 
-
-
-
+      
 @blueprint_user.route('/get_user/<string:username>', methods=['GET'])
 def get_user(username):
     """Get the user data of ``username``."""

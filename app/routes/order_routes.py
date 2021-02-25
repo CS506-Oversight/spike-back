@@ -60,6 +60,7 @@ def create_checkout_session():
         abort(400)
 
     data = request.get_json()
+    print(data)
 
     checkout_session = Stripe.checkout.Session.create(
         payment_method_types=['card'],
