@@ -32,8 +32,10 @@ class OrderController:
 
         # customers can ONLY see their orders
         elif user_type == 'customer':
-            orders_doc_cust = order_ref.where('customer_id', '==', uid)  # TODO: NEED TO FIND CORRECT QUERY ACTIONS
-            for order in orders_doc_cust:
+            query = order_ref.where('customer_id', '==', uid).get()  # TODO: NEED TO FIND CORRECT QUERY ACTIONS
+
+            # this does the check if the query is empty (i.e. returns empty array)
+            for order in query:
                 orders['orders'].append(order.to_dict())
         else:
             raise Exception('Unknown user type')
