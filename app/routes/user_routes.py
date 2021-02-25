@@ -64,15 +64,20 @@ def get_user(username):
 def update_user(username):
     """Update the user data of ``username``."""
     properties = json.loads(request.data)
-    user = UserController.update_user(username, properties)
-    return user, 201
-
+    if UserController.check_username(data["username"]):
+        user = UserController.update_user(username, properties)
+        return user, 201
+    else:
+        return jsonify({'status': 'Failed', 'message': 'Not a valid Username'}), 401
 
 @blueprint_user.route('/delete_user/<string:username>', methods=['DELETE'])
 def delete_user(username):
     """Endpoint to delete the user at ``username``."""
-    username = UserController.delete_user(username)
-    if username:
-        return jsonify({'status': 'Success', 'message': f'User with username {username} has been deleted.'}), 200
+    if UserController.check_username(data["username"]):
+        username = UserController.delete_user(username)
+        if username:
+            return jsonify({'status': 'Success', 'message': f'User with username {username} has been deleted.'}), 200
 
-    return jsonify({'status': 'Failed', 'message': 'There was a problem deleting the user.'}), 500
+        return jsonify({'status': 'Failed', 'message': 'There was a problem deleting the user.'}), 500
+    else:
+        return jsonify({'status': 'Failed', 'message': 'Not a valid Username'}), 401
