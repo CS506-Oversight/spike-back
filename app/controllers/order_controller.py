@@ -91,3 +91,18 @@ class OrderController:
         order.update({'in_progress': False})
 
         return order_id
+
+    @staticmethod
+    def email_pdf(order_id):
+        """Allows orders to be marked as completed."""
+        order_ref = fb_db.collection('Orders')
+        order = order_ref.document(order_id).get()
+        print(order)
+        order_dic = order.to_dict()
+        user_id = order_dic["customer_id"]
+        user = fb_db.collection('Users').document(user_id).get()
+        user_dic = user.to_dict()
+        email = user_dic["email"]
+
+        print(email)
+        #return email

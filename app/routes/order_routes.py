@@ -1,14 +1,13 @@
 """Routes for performing actions related to order."""
 import os
-
 import json
-
-from flask import Blueprint, abort, jsonify, request
+import pdfkit
+from flask import Blueprint, abort, jsonify, request, send_file
 from stripe.error import SignatureVerificationError
 from app.controllers import OrderController
 
 from app.config import Stripe
-
+config = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
 __all__ = ('blueprint_order',)
 
 blueprint_order = Blueprint('order', __name__)
@@ -103,13 +102,32 @@ def webhook():
 
     if event_dict['type'] == 'checkout.session.completed':
         session = event['data']['object']
+        intent_id = event_dict['data']['object']['payment_intent']
+        intent = Stripe.PaymentIntent.retrieve(intent_id)
+        intent_dic = intent.to_dict()
+        print("INTENT")
+        receipt_url = (intent_dic['charges']['data'][0]['receipt_url'])
 
+        #We need to send off then delete
         order_id = OrderController.create_order(session)
+        pdfkit.from_url(receipt_url, ("app/RECEIPT" + order_id+'.pdf'), configuration=config)
 
         if order_id:
             return {'order_id': order_id, 'message': 'Order was successfully placed.'}, 201
 
     return 'OK', 200
+
+@blueprint_order.route('/get_pdf/<order_id>')
+def get_pdf(order_id):
+    """Returns Reciept_pdf."""
+    receipt = 'RECEIPT'+order_id+'.pdf'
+    return send_file(receipt)
+
+@blueprint_order.route('/email_pdf/<order_id>', methods=['POST'])
+def email_pdf(order_id):
+    """Returns Reciept_pdf."""
+    OrderController.email_pdf(order_id)
+    return "success"
 
 
 @blueprint_order.route('/success', methods=['GET'])
