@@ -55,7 +55,7 @@ class OrderController:
         return orders
 
     @staticmethod
-    def create_order(session):
+    def create_order(session, payment_type, receipt_url):
         """Create an ``order``."""
         order_info = {
             'order_subtotal': session['amount_subtotal'] / 100,
@@ -64,7 +64,9 @@ class OrderController:
             'order_id': session['id'],
             'customer_id': session['metadata']['customer_id'],
             'in_progress': True,
-            'order_date': datetime.now()
+            'order_date': datetime.now(),
+            'type': payment_type,
+            'receipt': receipt_url
         }
 
         order_id = order_info['order_id']
@@ -91,17 +93,3 @@ class OrderController:
         order.update({'in_progress': False})
 
         return order_id
-
-    @staticmethod
-    def email_pdf(order_id):
-        """Allows orders to be marked as completed."""
-        order_ref = fb_db.collection('Orders')
-        order = order_ref.document(order_id).get()
-        print(order)
-        order_dic = order.to_dict()
-        user_id = order_dic["customer_id"]
-        user = fb_db.collection('Users').document(user_id).get()
-        user_dic = user.to_dict()
-        email = user_dic["email"]
-
-        print(email)
