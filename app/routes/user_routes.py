@@ -69,7 +69,7 @@ def update_user(username):
     properties = json.loads(request.data)
     if UserController.check_username(username):
         user = UserController.update_user(username, properties)
-        return user, 201
+        return jsonify(user), 201
     else:
         return jsonify({'status': 'Failed', 'message': 'Not a valid Username'}), 401
 
