@@ -71,8 +71,9 @@ class UserController:
             password = properties['password'].encode('utf8')
             hashed = bcrypt.hashpw(password, bcrypt.gensalt())
             properties['password'] = hashed
+
         if 'username' in properties:
-            del properties['username']
+            username = properties['username']
 
         doc.update(properties)
         user = cls.get_user(username)
