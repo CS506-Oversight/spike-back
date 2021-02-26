@@ -4,6 +4,7 @@ import json
 from flask import Blueprint, abort, jsonify, request, send_file
 from stripe.error import SignatureVerificationError
 from app.controllers import OrderController
+from app.controllers.user_controller import UserController
 
 from app.config import Stripe
 __all__ = ('blueprint_order',)
@@ -19,10 +20,11 @@ def get_order(order_id):
 
     user_id = data['user_id']
     user_role = data['type']
-
-    order = OrderController.get_order(user_id, user_role, order_id)
-
-    return jsonify(order)
+    if UserController.check_user_id:
+        order = OrderController.get_order(user_id, user_role, order_id)
+        return jsonify(order)
+    else:
+        return jsonify({'status': 'Failed', 'message': 'Not a valid Username'}), 401
 
 
 @blueprint_order.route('/orders', methods=['GET'])
@@ -34,12 +36,12 @@ def get_orders():
     their UID. Certain data will be returned based on who the user is.
     """
     data = json.loads(request.data)
-    uid = data['uid']
-
-    orders = OrderController.get_orders(uid)
-
-    return jsonify(orders), 200
-
+    user_id = data['user_id']
+    if UserController.check_user_id:
+        orders = OrderController.get_orders(user_id)
+        return jsonify(orders), 200
+    else:
+        return jsonify({'status': 'Failed', 'message': 'Not a valid Username'}), 401
 
 @blueprint_order.route('/complete_order', methods=['POST'])
 def complete_order():
