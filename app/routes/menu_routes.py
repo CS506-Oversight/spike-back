@@ -41,6 +41,7 @@ def get_menu_item(item_id):
     return jsonify(data), 200
 
 
+
 @blueprint_menu.route('/create_menu_item', methods=['POST'])
 def create_menu_item():
     """
