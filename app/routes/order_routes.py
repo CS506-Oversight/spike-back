@@ -120,7 +120,7 @@ def webhook():
 @blueprint_order.route('/get_pdf/<order_id>')
 def get_pdf(order_id):
     """Returns Reciept_pdf."""
-    receipt = 'RECEIPT'+order_id+'.pdf'
+    receipt = 'RECEIPT' + order_id + '.pdf'
     return send_file(receipt)
 
 @blueprint_order.route('/email_pdf/<order_id>', methods=['POST'])

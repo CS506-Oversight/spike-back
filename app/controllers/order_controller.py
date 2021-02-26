@@ -105,4 +105,3 @@ class OrderController:
         email = user_dic["email"]
 
         print(email)
-        #return email
