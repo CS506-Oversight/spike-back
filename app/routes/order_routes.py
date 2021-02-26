@@ -43,6 +43,7 @@ def get_orders():
     else:
         return jsonify({'status': 'Failed', 'message': 'Not a valid Username'}), 401
 
+
 @blueprint_order.route('/complete_order', methods=['POST'])
 def complete_order():
     """Allows orders to be marked as completed."""
