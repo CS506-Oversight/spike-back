@@ -1,5 +1,6 @@
 """Controller implementations for orders."""
-from datetime import datetime
+import pytz
+from datetime import datetime, timedelta
 from app.config import Stripe, fb_db
 
 __all__ = ('OrderController',)
@@ -55,6 +56,31 @@ class OrderController:
         return orders
 
     @staticmethod
+    def get_pickup_time(date_time_obj, total_time):
+        # TODO: Calculate total time
+        cst = pytz.timezone('US/Central')
+        fmt = '%H:%M %p'
+
+        print(date_time_obj)
+
+        pickup_time_utc = date_time_obj + timedelta(minutes=total_time)
+
+        times = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+        time_to_str = pickup_time_utc.strftime(fmt)
+        time_split = time_to_str.split(' ')
+
+        pm_or_am = time_split[1]
+        hour_min_split = time_split[0].split(':')
+
+        hour = hour_min_split[0]
+        hour_to_tweleve_clock = times[int(hour)]
+
+        pickup_time = f'{hour_to_tweleve_clock}:{hour_min_split[1]} {pm_or_am}'
+
+        return pickup_time
+
+    @staticmethod
     def create_order(session, payment_type, receipt_url):
         """Create an ``order``."""
         order_info = {
@@ -87,9 +113,20 @@ class OrderController:
     @staticmethod
     def complete_order(order_id):
         """Allows orders to be marked as completed."""
-        order_ref = fb_db.collection('Orders')
-        order = order_ref.document(order_id)
+        menu_ref = fb_db.collection('Menu')
+        menu = menu_ref.document(order_id)
 
-        order.update({'in_progress': False})
+        menu.update({'in_progress': False})
 
         return order_id
+
+    @staticmethod
+    def get_successful_order(session_id):
+        """Allows orders to be marked as completed."""
+        order_ref = fb_db.collection('Orders')
+        order = order_ref.document(session_id).get()
+
+        order_info = order.to_dict()
+        order_info['pickup_time'] = OrderController.get_pickup_time(order_info['order_date'], 45)
+
+        return order_info
