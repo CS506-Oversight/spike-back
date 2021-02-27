@@ -61,7 +61,7 @@ class ReportController:
         row1.append("Number of Customers")
         food_menu = final_menu['menu']
 
-        with open('days_report.csv', mode='w') as csvfile:
+        with open('./app/templates/days_report.csv', mode='w') as csvfile:
             test_writer = csv.writer(csvfile, delimiter=',',
                                     quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
 
@@ -92,7 +92,7 @@ class ReportController:
                             for x in range(0, len(food_menu)):
                                 if units[0] == food_menu[x]['item_id']:
                                     food_nums[x] += int(units[1])
-                row.append(total_profit)
+                row.append(round(total_profit, 2))
                 row.append(num_orders)
                 row.append(len(unique_customers))
                 row += food_nums
@@ -107,7 +107,7 @@ class ReportController:
         row1.append("Number of Customers")
         food_menu = final_menu['menu']
 
-        with open('weeks_report.csv', mode='w') as csvfile:
+        with open('./app/templates/weeks_report.csv', mode='w') as csvfile:
             test_writer = csv.writer(csvfile, delimiter=',',
                                      quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
 
@@ -138,7 +138,7 @@ class ReportController:
                             for x in range(0, len(food_menu)):
                                 if units[0] == food_menu[x]['item_id']:
                                     food_nums[x] += int(units[1])
-                row.append(total_profit)
+                row.append(round(total_profit, 2))
                 row.append(num_orders)
                 row.append(len(unique_customers))
                 row += food_nums
@@ -147,13 +147,13 @@ class ReportController:
         """MONTH REPORT"""
         """header row"""
         row1 = []
-        row1.append("Week")
+        row1.append("Month")
         row1.append("Total Profit")
         row1.append("Number of Orders")
         row1.append("Number of Customers")
         food_menu = final_menu['menu']
 
-        with open('months_report.csv', mode='w') as csvfile:
+        with open('./app/templates/months_report.csv', mode='w') as csvfile:
             test_writer = csv.writer(csvfile, delimiter=',',
                                      quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
 
@@ -184,7 +184,7 @@ class ReportController:
                             for x in range(0, len(food_menu)):
                                 if units[0] == food_menu[x]['item_id']:
                                     food_nums[x] += int(units[1])
-                row.append(total_profit)
+                row.append(round(total_profit, 2))
                 row.append(num_orders)
                 row.append(len(unique_customers))
                 row += food_nums
@@ -193,13 +193,13 @@ class ReportController:
         """YEAR REPORT"""
         """header row"""
         row1 = []
-        row1.append("Week")
+        row1.append("Year")
         row1.append("Total Profit")
         row1.append("Number of Orders")
         row1.append("Number of Customers")
         food_menu = final_menu['menu']
 
-        with open('years_report.csv', mode='w') as csvfile:
+        with open('./app/templates/years_report.csv', mode='w') as csvfile:
             test_writer = csv.writer(csvfile, delimiter=',',
                                      quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
 
@@ -230,7 +230,7 @@ class ReportController:
                             for x in range(0, len(food_menu)):
                                 if units[0] == food_menu[x]['item_id']:
                                     food_nums[x] += int(units[1])
-                row.append(total_profit)
+                row.append(round(total_profit, 2))
                 row.append(num_orders)
                 row.append(len(unique_customers))
                 row += food_nums
