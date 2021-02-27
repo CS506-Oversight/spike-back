@@ -37,6 +37,7 @@ def create_user():
 def check_pass():
     """Check if the user passes the auth check."""
     data = json.loads(request.data)
+    print(data)
     password = data['password'].encode('utf-8')
 
     if UserController.check_username(data["username"]):

@@ -70,7 +70,7 @@ class UserController:
         if 'password' in properties:
             password = properties['password'].encode('utf8')
             hashed = bcrypt.hashpw(password, bcrypt.gensalt())
-            properties['password'] = hashed
+            properties['password'] = hashed.decode('utf-8')
 
         if 'username' in properties:
             username = properties['username']
