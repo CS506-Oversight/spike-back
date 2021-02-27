@@ -50,6 +50,7 @@ def create_menu_item():
     Returns 500 if the item cannot be created.
     """
     data = json.loads(request.data)
+    print(data)
 
     menu_item = MenuItem(
         item_name=data['name'], item_desc=data['description'], item_price=data['price'],

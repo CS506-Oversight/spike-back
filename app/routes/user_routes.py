@@ -3,6 +3,7 @@ import json
 import random
 import string
 import bcrypt
+import jwt
 from flask import Blueprint, jsonify, request
 
 from app.controllers.user_controller import UserController
@@ -44,7 +45,9 @@ def check_pass():
         hashed = UserController.get_hashed(data["username"]).encode('utf-8')
         if bcrypt.checkpw(password, hashed):
             user = UserController.get_user(data['username'])
-            return jsonify(user), 200
+            token = jwt.encode(user, "Secret")
+            user["token"] = token
+            return token, 200
 
         return jsonify({'status': 'Failed', 'message': 'Password is Incorrect'}), 401
 

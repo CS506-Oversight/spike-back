@@ -53,7 +53,7 @@ class MenuController:
         )
         # registers a new price and binds it to the new product made above
         price_obj = Stripe.Price.create(
-            unit_amount=int(menu_item.item_price * 100),
+            unit_amount=int(float(menu_item.item_price) * 100),
             currency='usd',
             product=new_product['id'])
         price_id = price_obj["id"]
@@ -90,7 +90,7 @@ class MenuController:
     @staticmethod
     def update_stripe_price(item_id, updated_price):
         """Update the price of ``item_id`` to ``updated_price`` on stripe."""
-        target_price = int(updated_price * 100)
+        target_price = int(float(updated_price) * 100)
         price_list = Stripe.Price.list(product=item_id)
         data = price_list['data']
 
@@ -108,7 +108,7 @@ class MenuController:
 
         if not price_exists:
             Stripe.Price.create(
-                unit_amount=int(updated_price * 100),
+                unit_amount=int(float(updated_price) * 100),
                 currency='usd',
                 product=item_id,
                 active=True)  # new_price
