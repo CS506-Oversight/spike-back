@@ -46,8 +46,8 @@ def check_pass():
         if bcrypt.checkpw(password, hashed):
             user = UserController.get_user(data['username'])
             token = jwt.encode(user, "Secret")
-            user["token"] = token
-            return token, 200
+            user["jwt"] = token.decode('utf8')
+            return user, 200
 
         return jsonify({'status': 'Failed', 'message': 'Password is Incorrect'}), 401
 
