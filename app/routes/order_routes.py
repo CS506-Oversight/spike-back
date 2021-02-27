@@ -1,7 +1,8 @@
 """Routes for performing actions related to order."""
 import os
 import json
-from flask import Blueprint, abort, jsonify, request, send_file
+from time import sleep
+from flask import Blueprint, abort, jsonify, request, send_file, render_template
 from stripe.error import SignatureVerificationError
 from app.controllers import OrderController
 from app.controllers.user_controller import UserController
@@ -65,8 +66,8 @@ def create_checkout_session():
         payment_method_types=['card'],
         line_items=data['items'],
         mode='payment',
-        success_url='http://localhost:8787/success',  # change to frontend page
-        cancel_url='http://localhost:8787/cancel',  # change to frontend page
+        success_url='http://localhost:8787/success?session_id={CHECKOUT_SESSION_ID}',  # change to frontend page
+        cancel_url='http://localhost:3000',  # change to frontend page
         metadata=data['metadata']
     )
 
@@ -121,10 +122,11 @@ def webhook():
 @blueprint_order.route('/success', methods=['GET'])
 def success():
     """Endpoint used by stripe for obtaining the response of order success."""
-    return 'Purchase successful. Thank you!'
 
+    session_id = request.args.get('session_id')
 
-@blueprint_order.route('/cancel', methods=['GET'])
-def cancel():
-    """Endpoint used by stripe for obtaining the response of order cancellation."""
-    return 'Purchase cancelled.'
+    sleep(4)
+    order_info = OrderController.get_successful_order(session_id)
+    sleep(4)
+
+    return render_template('success.html', order_info=order_info)
